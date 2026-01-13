@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preferensi Wisata - WisataIn</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">WisataIn.</div>
+        <ul>
+            <li><a href="index.html">Beranda</a></li>
+        </ul>
+    </nav>
+
+    <div class="pref-container">
+        <header class="pref-header">
+            <h2>Form Preferensi Wisata</h2>
+            <p>Isi preferensi Anda untuk mendapatkan rekomendasi wisata yang sesuai.</p>
+        </header>
+
+        <form id="prefForm">
+            
+            <div class="form-group">
+                <h3>1. Jenis Wisata yang Diminati</h3>
+                <div class="grid-options">
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="alam">
+                        <div class="card-content">
+                            <span class="emoji">🌲</span> <span>Wisata Alam</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="budaya_sejarah">
+                        <div class="card-content">
+                            <span class="emoji">🏛️</span> <span>Budaya & Sejarah</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="kuliner">
+                        <div class="card-content">
+                            <span class="emoji">🍜</span> <span>Kuliner</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="pantai">
+                        <div class="card-content">
+                            <span class="emoji">🏖️</span> <span>Pantai</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="keluarga">
+                        <div class="card-content">
+                            <span class="emoji">👨‍👩‍👧‍👦</span> <span>Keluarga</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="petualangan">
+                        <div class="card-content">
+                            <span class="emoji">🧗</span> <span>Petualangan</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="jenis_wisata" value="edukasi">
+                        <div class="card-content">
+                            <span class="emoji">🎓</span> <span>Edukasi</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h3>2. Lokasi Tujuan</h3>
+                <div class="input-wrapper">
+                    <select id="lokasi" class="modern-input">
+                        <option value="" disabled selected>Pilih wilayah tujuan wisata</option>
+                        <option value="bali">Bali</option>
+                        <option value="jogja">Yogyakarta</option>
+                        <option value="bandung">Bandung</option>
+                        <option value="jakarta">Jakarta</option>
+                        <option value="lombok">Lombok</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h3>3. Perkiraan Anggaran (Rp)</h3>
+                <div class="budget-inputs">
+                    <div class="input-box">
+                        <label>Minimal</label>
+                        <input type="number" id="min_budget" class="modern-input" placeholder="Contoh: 500000">
+                    </div>
+                    <div class="input-box">
+                        <label>Maksimal</label>
+                        <input type="number" id="max_budget" class="modern-input" placeholder="Contoh: 5000000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <h3>4. Aktivitas yang Ingin Dilakukan</h3>
+                <div class="grid-options col-2"> <label class="option-card">
+                        <input type="checkbox" name="aktivitas" value="hiking">
+                        <div class="card-content">
+                            <span class="emoji">🥾</span> <span>Hiking / Trekking</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="aktivitas" value="snorkeling">
+                        <div class="card-content">
+                            <span class="emoji">🤿</span> <span>Snorkeling / Diving</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="aktivitas" value="foto">
+                        <div class="card-content">
+                            <span class="emoji">📸</span> <span>Hunting Foto IG</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="aktivitas" value="museum">
+                        <div class="card-content">
+                            <span class="emoji">🏺</span> <span>Museum / Sejarah</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="aktivitas" value="wahana">
+                        <div class="card-content">
+                            <span class="emoji">🎡</span> <span>Wahana (Theme Park)</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="checkbox" name="aktivitas" value="spa">
+                        <div class="card-content">
+                            <span class="emoji">🧖</span> <span>Relaksasi / Spa</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" onclick="simpanPreferensi()" class="cta-button full-width">
+                    Lihat Rekomendasi ✨
+                </button>
+                <button type="reset" class="reset-button">Reset Filter</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

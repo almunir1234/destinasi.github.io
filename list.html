@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekomendasi Wisata - WisataIn</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">WisataIn.</div>
+        <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="preferences.html">Ulangi Filter</a></li>
+        </ul>
+    </nav>
+
+    <div class="list-header">
+        <h1>Rekomendasi Untukmu ✨</h1>
+        <p>Berdasarkan preferensi yang kamu pilih, inilah destinasi terbaik menurut AI kami.</p>
+        
+        <div id="userFilterSummary" class="filter-summary">
+            </div>
+    </div>
+
+    <div class="container">
+        <div id="resultContainer" class="destination-grid">
+            </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+    
+    <script>
+        // Kita taruh logic render di sini agar terpisah rapi
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecommendations();
+        });
+
+        function renderRecommendations() {
+            // 1. Ambil Data Preferensi dari LocalStorage
+            const storedData = localStorage.getItem('userPreferences');
+            
+            if (!storedData) {
+                alert("Kamu belum mengisi preferensi!");
+                window.location.href = 'preferences.html';
+                return;
+            }
+
+            const userPref = JSON.parse(storedData);
+            const container = document.getElementById('resultContainer');
+            const summary = document.getElementById('userFilterSummary');
+
+            // Tampilkan Summary Pilihan User
+            summary.innerHTML = `
+                <span>📍 ${userPref.lokasi.toUpperCase()}</span>
+                <span>💰 Max Rp${parseInt(userPref.budget.max).toLocaleString()}</span>
+                <span>❤️ ${userPref.jenisWisata.join(', ')}</span>
+            `;
+
+            // --- 2. LOGIKA AI SEDERHANA (SCORING SYSTEM) ---
+            // Kita hitung skor kecocokan tiap destinasi
+            
+            const scoredDestinations = destinations.map(dest => {
+                let score = 0;
+
+                // A. Filter Mutlak: LOKASI & BUDGET (Kalau gak masuk, skor lgsg -1)
+                const isLocationMatch = dest.city === userPref.lokasi;
+                const isBudgetOk = dest.price >= userPref.budget.min && dest.price <= userPref.budget.max;
+
+                if (!isLocationMatch || !isBudgetOk) {
+                    return { ...dest, score: -1 }; // Didiskualifikasi
+                }
+
+                // B. Scoring: JENIS WISATA (+10 poin per match)
+                // Kita cek apakah jenis wisata destinasi ini ada di pilihan user
+                const typeMatch = dest.types.filter(type => userPref.jenisWisata.includes(type));
+                score += typeMatch.length * 10;
+
+                // C. Scoring: AKTIVITAS (+5 poin per match)
+                const activityMatch = dest.activities.filter(act => userPref.aktivitas.includes(act));
+                score += activityMatch.length * 5;
+
+                return { ...dest, score: score };
+            });
+
+            // 3. Filter yang skornya -1 (Gagal) & Urutkan dari Skor Tertinggi
+            const finalResults = scoredDestinations
+                .filter(item => item.score >= 0)
+                .sort((a, b) => b.score - a.score); // Descending (Besar ke Kecil)
+
+            // 4. Render ke HTML
+            container.innerHTML = ''; // Kosongkan dulu
+
+            if (finalResults.length === 0) {
+                container.innerHTML = `
+                    <div class="no-result">
+                        <h3>Yah, belum ada yang pas... 😔</h3>
+                        <p>Coba ubah filter budget atau lokasimu.</p>
+                        <a href="preferences.html" class="cta-button">Ubah Preferensi</a>
+                    </div>
+                `;
+                return;
+            }
+
+            finalResults.forEach(item => {
+                // Buat Kartu HTML
+                const card = `
+                    <div class="dest-card">
+                        <div class="card-img">
+                            <img src="${item.image}" alt="${item.name}">
+                            <span class="rating">⭐ ${item.rating}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-meta">
+                                <span class="badge-city">📍 ${item.city.toUpperCase()}</span>
+                                <span class="badge-match">${item.score} Poin Cocok</span>
+                            </div>
+                            <h3>${item.name}</h3>
+                            <p class="price">${item.price === 0 ? 'Gratis' : 'Rp ' + item.price.toLocaleString()}</p>
+                            <p class="desc">${item.desc}</p>
+                            <div class="tags">
+                                ${item.types.map(t => `<span>#${t}</span>`).join('')}
+                            </div>
+                            <a href="detail.html?id=${item.id}" class="btn-detail">Lihat Detail</a>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += card;
+            });
+        }
+    </script>
+</body>
+</html>

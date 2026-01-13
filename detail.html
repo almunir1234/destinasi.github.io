@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Wisata - WisataIn</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">WisataIn.</div>
+        <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="list.html">Kembali</a></li>
+        </ul>
+    </nav>
+
+    <div class="container detail-page-wrapper">
+        
+        <div class="detail-header">
+            <div class="detail-image-box">
+                <img id="d_image" src="" alt="Detail Gambar">
+                <div class="price-tag" id="d_price">Rp 0</div>
+            </div>
+            
+            <div class="detail-info">
+                <span class="city-badge" id="d_city">📍 LOKASI</span>
+                <h1 id="d_name">Nama Destinasi</h1>
+                <div class="rating-box">
+                    <span class="star">⭐</span> <span id="d_rating">0.0</span>
+                </div>
+                
+                <hr class="divider">
+
+                <h3>Tentang Tempat Ini</h3>
+                <p id="d_desc" class="desc-text">Deskripsi akan muncul di sini...</p>
+
+                <div class="features-box">
+                    <h4>Kategori & Aktivitas:</h4>
+                    <div id="d_tags" class="tags-container"></div>
+                </div>
+
+                <a href="#" class="cta-button full-width" onclick="alert('Fitur Booking akan hadir di Backend PHP!')">Booking Sekarang</a>
+            </div>
+        </div>
+
+        <div class="location-section">
+            <div class="section-title">
+                <h2>Lokasi Destinasi 🗺️</h2>
+                <p>Cek lokasi tepatnya di Google Maps agar kamu tidak tersesat.</p>
+            </div>
+            
+            <div class="map-wrapper">
+                <iframe 
+                    id="gmap_canvas"
+                    width="100%" 
+                    height="400" 
+                    frameborder="0" 
+                    scrolling="no" 
+                    marginheight="0" 
+                    marginwidth="0" 
+                    src="">
+                </iframe>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a id="btn_maps_link" href="#" target="_blank" class="cta-button outline">
+                    Buka di Aplikasi Google Maps ↗
+                </a>
+            </div>
+        </div>
+
+        <br><br>
+
+        <div class="recommendation-section">
+            <div class="section-title">
+                <h2>Mungkin Kamu Juga Suka 😍</h2>
+                <p>Destinasi ini mirip dengan yang sedang kamu lihat (Berdasarkan kemiripan fitur).</p>
+            </div>
+
+            <div id="relatedContainer" class="destination-grid"></div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = parseInt(params.get('id'));
+
+            const currentDest = destinations.find(item => item.id === id);
+
+            if (!currentDest) {
+                alert("Destinasi tidak ditemukan!");
+                window.location.href = 'list.html';
+                return;
+            }
+
+            // 1. Render Teks & Gambar
+            document.title = `${currentDest.name} - WisataIn`;
+            document.getElementById('d_image').src = currentDest.image;
+            document.getElementById('d_name').innerText = currentDest.name;
+            document.getElementById('d_city').innerText = `📍 ${currentDest.city.toUpperCase()}`;
+            document.getElementById('d_rating').innerText = currentDest.rating;
+            document.getElementById('d_desc').innerText = currentDest.desc;
+            document.getElementById('d_price').innerText = currentDest.price === 0 ? "GRATIS" : `Rp ${currentDest.price.toLocaleString()}`;
+
+            // 2. Render Tags
+            const tagsContainer = document.getElementById('d_tags');
+            const allTags = [...currentDest.types, ...currentDest.activities];
+            allTags.forEach(tag => {
+                tagsContainer.innerHTML += `<span class="tag-pill">#${tag}</span>`;
+            });
+
+            // 3. Render Peta (Urutan Benar: Setelah Data Load)
+            const queryLokasi = encodeURIComponent(currentDest.name + " " + currentDest.city);
+            
+            // Link Embed Iframe
+            const mapIframeUrl = `https://maps.google.com/maps?q=${queryLokasi}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+            document.getElementById('gmap_canvas').src = mapIframeUrl;
+
+            // Link Tombol Direct Maps
+            const mapDirectLink = `https://www.google.com/maps/search/${queryLokasi}`;
+            document.getElementById('btn_maps_link').href = mapDirectLink;
+
+            // 4. Logika AI Content-Based Filtering
+            const relatedItems = destinations
+                .filter(item => item.id !== currentDest.id)
+                .map(item => {
+                    const otherTags = [...item.types, ...item.activities];
+                    const intersection = allTags.filter(tag => otherTags.includes(tag));
+                    return { ...item, similarityScore: intersection.length };
+                })
+                .sort((a, b) => b.similarityScore - a.similarityScore)
+                .slice(0, 3);
+
+            const recContainer = document.getElementById('relatedContainer');
+            relatedItems.forEach(item => {
+                const card = `
+                    <div class="dest-card">
+                        <div class="card-img">
+                            <img src="${item.image}" alt="${item.name}">
+                            <span class="rating">⭐ ${item.rating}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="card-meta">
+                                <span class="badge-city">📍 ${item.city.toUpperCase()}</span>
+                                <span class="badge-match">Cocok ${item.similarityScore} Fitur</span>
+                            </div>
+                            <h3>${item.name}</h3>
+                            <a href="detail.html?id=${item.id}" class="btn-detail">Lihat Detail</a>
+                        </div>
+                    </div>
+                `;
+                recContainer.innerHTML += card;
+            });
+        });
+    </script>
+</body>
+</html>
