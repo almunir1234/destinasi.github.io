@@ -177,7 +177,7 @@ nav a:hover {
 .main-image-box {
     width: 400px;
     height: 500px;
-    border-radius: 30% 0% 0% 30%;
+    border-radius: 50% 0% 0% 50%;
     overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(44, 62, 80, 0.25); /* Shadow lebih gelap */
     border: 5px solid var(--bg-white);
@@ -231,7 +231,7 @@ nav a:hover {
     .blob-1 { width: 300px; height: 300px; top: 20px; right: auto; }
     .blob-2 { display: none; }
     .main-image-box { width: 280px; height: 300px; margin: 0 auto; 
-                    border-radius: 0% 0% 30% 30%;
+                    border-radius: 0% 0% 40% 40%;
                     /* Efek Transparan pada sisi kanan */
                     -webkit-mask-image: linear-gradient(to top, black 50%, transparent 100%);
                     mask-image: linear-gradient(to top, black 50%, transparent 100%);
